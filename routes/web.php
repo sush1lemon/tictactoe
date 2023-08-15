@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\PlayerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,17 +17,12 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function (Request $request) {
-    $uToken = $request->cookie('x-tic-tac-toe');
-    if (!$uToken) {
-        Cookie::queue('x-tic-tac-toe', "random", 60*60*360);
-    }
-    return Inertia::render("Home");
-});
+Route::get('/', [GameController::class, "serveHome"])->name('home');
+Route::post('/save-player', [PlayerController::class, 'savePlayer']);
 
-//Route::post('/find-match');
+Route::post('/find-match', [GameController::class, 'findMatch']);
 
-Route::get('/play/{game}', [GameController::class, "play"]);
+Route::get('/play/{game}', [GameController::class, 'play']);
 
 
 Route::prefix('/game/{game}')->group(function (){

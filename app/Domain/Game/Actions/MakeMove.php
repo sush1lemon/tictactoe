@@ -13,6 +13,7 @@ class MakeMove
         return GameMove::query()
             ->create([
                 'game_id' => $game->id,
+                'game_round' => $game->round,
                 'player_id' => $player->id,
                 'position' => $position,
             ]);

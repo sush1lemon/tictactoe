@@ -1,5 +1,11 @@
 import './bootstrap';
 
+import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
+
+import '@skeletonlabs/skeleton/styles/skeleton.css';
+
+
+
 import { createInertiaApp } from '@inertiajs/svelte'
 
 createInertiaApp({
