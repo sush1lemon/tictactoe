@@ -16,6 +16,11 @@ class GameState
         $this->game = $game;
     }
 
+    public function newRound() {
+        $this->game->round += 1;
+        $this->game->save();
+    }
+
     private function getMoves(): Collection {
         return GameMove::query()
             ->where('game_id', $this->game->id)

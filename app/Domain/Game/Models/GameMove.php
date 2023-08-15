@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class GameMove extends Model
 {
     protected $fillable = [
-        'user_id',
+        'game_id',
+        'game_round',
+        'player_id',
         'position',
     ];
 }
