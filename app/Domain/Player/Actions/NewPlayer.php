@@ -9,7 +9,7 @@ class NewPlayer
     public function do(string $name, string $token) : Player
     {
         return Player::query()
-            ->create([
+            ->updateOrCreate([
                 'name' => $name,
                 'token' => $token,
             ]);

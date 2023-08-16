@@ -18,14 +18,17 @@ use Inertia\Inertia;
 */
 
 Route::get('/', [GameController::class, "serveHome"])->name('home');
-Route::post('/save-player', [PlayerController::class, 'savePlayer']);
+Route::post('/new-game', [GameController::class, "newGame"]);
+Route::get('/history', [GameController::class, 'history']);
 
-Route::post('/find-match', [GameController::class, 'findMatch']);
+//Route::post('/save-player', [PlayerController::class, 'savePlayer']);
+//Route::post('/find-match', [GameController::class, 'findMatch']);
 
-Route::get('/play/{game}', [GameController::class, 'play']);
+Route::get('/play/{game}', [GameController::class, 'play'])->name('play');
 
 
 Route::prefix('/game/{game}')->group(function (){
+    Route::put('', [GameController::class, 'update']);
     Route::post('/move', [GameController::class, 'makeMove']);
     Route::post('/events');
 });

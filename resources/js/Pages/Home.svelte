@@ -1,111 +1,80 @@
 <script>
-
     import DefaultLayout from "@/Layouts/DefaultLayout.svelte";
-    import {localStorageStore, modalStore} from "@skeletonlabs/skeleton";
+    import {modalStore} from "@skeletonlabs/skeleton";
+    import {router} from "@inertiajs/svelte";
 
-    import { router } from '@inertiajs/svelte'
-    import axios from "axios";
-
-    export let player;
+    let player1 = localStorage.getItem('player_1') ?? '';
+    let player2 = localStorage.getItem('player_2') ?? '';
 
 
-    console.log('this is the player', player)
-
-    let name = ''
-    const modal = {
+    const p1Modal = {
         type: 'prompt',
         // Data
-        title: 'Tell us your name',
-        body: 'Provide a name in the field below.',
+        title: 'Enter player 1 name',
         // Populates the input value and attributes
-        value: name,
         valueAttr: {type: 'text', minlength: 3, maxlength: 10, required: true},
         // Returns the updated response value
         response: (r) => {
             if (r) {
-                saveUser(r)
+                player1 = r;
+                localStorage.setItem('player_1', r)
+                modalStore.trigger(p2Modal);
             }
         },
     };
 
-    const findingMatchModal = {
-        type: 'alert',
-        title: 'Finding other player',
-        body: 'Looking for other player to join the queue.',
-        response: () => cancelMatchFind()
+
+    const p2Modal = {
+        type: 'prompt',
+        // Data
+        title: 'Enter player 2 name',
+        // Populates the input value and attributes
+        valueAttr: {type: 'text', minlength: 3, maxlength: 10, required: true},
+        // Returns the updated response value
+        response: (r) => {
+            if (r) {
+                player2 = r;
+                localStorage.setItem('player_2', r)
+                console.log(player1, player2)
+                // saveUser(r)
+            }
+        },
+    };
+
+    const fillName = function () {
+        console.log(player1, player2)
+        if (player1 !== '') {
+            modalStore.trigger(p2Modal);
+        } else {
+            modalStore.trigger(p1Modal);
+        }
     }
 
-    const showModal = function () {
-        console.log('here')
-        modalStore.trigger(modal);
-    }
-
-    const findMatch = function () {
-        modalStore.trigger(findingMatchModal)
-        axios.post('/find-match')
-        setTimeout(() => {
-            modalStore.close()
-        }, 5000)
-    }
-
-    const cancelMatchFind = function () {
-        console.log("im ending this match!")
-    }
-
-    const saveUser  = function (name) {
-        router.post('/save-player', {
-            name: name
+    const startGame = function () {
+        router.post('/new-game', {
+            player1,
+            player2
         })
     }
 
 </script>
 
-
 <DefaultLayout>
-
     <div class="flex flex-col justify-between items-center">
-
-        {#if (player)}
-            <div class="flex flex-col gap-4">
-                <h3 class="text-4xl font-medium">Welcome <b>{ player.name }!</b></h3>
-                <button on:click={findMatch} class="border px-8 py-6 rounded text-4xl font-medium cursor-pointer text-mauve-12 hover:bg-white/90 hover:text-slate-900 transition-all">Start</button>
+        {#if player1 !== '' && player2 !== ''}
+            <div class="flex flex-col items-center gap-8">
+                <h3 class="text-2xl md:text-3xl lg:text-4xl break-words text-center">Welcome <b>{ player1 }</b> and <b>{ player2 }</b></h3>
+                <button on:click={startGame}
+                        class="border px-9 py-3 text-center rounded text-4xl font-medium cursor-pointer text-mauve-12 hover:bg-white hover:text-slate-900 transition-all">
+                    Start
+                </button>
+                <a href="/history" class="mt-20 text-lg">See Game History</a>
             </div>
-            {:else }
-            <button on:click={showModal} class="border px-8 py-6 rounded text-4xl font-medium cursor-pointer text-mauve-12 hover:bg-white/90 hover:text-slate-900 transition-all">Start New Game</button>
+        {:else}
+            <button on:click={fillName}
+                    class="border px-9 py-3 text-center rounded text-4xl font-medium cursor-pointer text-mauve-12 hover:bg-white hover:text-slate-900 transition-all">
+                Start New Game
+            </button>
         {/if}
-
-        <a href="/history" class="mt-20 text-lg">See game history</a>
     </div>
 </DefaultLayout>
-
-<!--<main class="h-screen bg-slate-900 text-mauve-12 flex flex-col justify-center items-center">-->
-
-
-<!--&lt;!&ndash;    <div class="grid grid-rows-3 grid-cols-3 gap-2 max-w-lg">&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">x</div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">&ndash;&gt;-->
-<!--&lt;!&ndash;            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle"><circle cx="12" cy="12" r="10"/></svg>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        <div class="border-2 flex items-center justify-center h-24 w-24 rounded-lg cursor-pointer">&ndash;&gt;-->
-<!--&lt;!&ndash;            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;    </div>&ndash;&gt;-->
-
-<!--    <div class="flex flex-col justify-between items-center">-->
-<!--        <button class="border px-8 py-6 rounded text-4xl font-medium cursor-pointer text-mauve-12 hover:bg-white/90 hover:text-slate-900 transition-all">Start New Game</button>-->
-<!--        <a href="/history" class="mt-20 text-lg">See game history</a>-->
-<!--    </div>-->
-
-<!--&lt;!&ndash;    <div class="mt-4">&ndash;&gt;-->
-<!--&lt;!&ndash;        <button class="border px-4 py-2 rounded-md font-medium">Exit</button>&ndash;&gt;-->
-<!--&lt;!&ndash;    </div>&ndash;&gt;-->
-
-<!--</main>-->
-
-

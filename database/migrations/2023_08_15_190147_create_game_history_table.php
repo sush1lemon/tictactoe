@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('game_history', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('game_id')->references('id')->on('games')->onDelete('cascade');
-            $table->uuid('winner')->references('id')->on('players')->onDelete('cascade');
+            $table->integer('game_round');
+            $table->uuid('winner')->nullable()->references('id')->on('players')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -18,8 +18,9 @@ class NewGame
         return Game::query()
             ->create([
                 'round' => 1,
-                'x_player' => $p1,
-                'o_player' => $p2,
+                'x_player' => $p1->id,
+                'o_player' => $p2->id,
+                'status' => 1
             ]);
     }
 }
